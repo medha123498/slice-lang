@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+#include <emscripten/emscripten.h>
+
+extern "C" {
+
+    // Calculates the price based on parameters sent by the frontend
+    EMSCRIPTEN_KEEPALIVE
+    double calculate_pizza(int size_type, int crust_type, int cheese, int pepperoni, int mushroom) {
+        double price = 0.0;
+        
+        // 1. Base Size Calculation
+        if (size_type == 1) price += 5.99;       // Small
+        else if (size_type == 2) price += 8.99;  // Medium
+        else if (size_type == 3) price += 11.99; // Large
+        
+        // 2. Crust Modifiers
+        if (crust_type == 2) price += 1.50;      // Stuffed Crust
+        else if (crust_type == 3) price += 2.00;  // Gluten-Free
+        
+        // 3. Dynamic Toppings pricing
+        if (cheese == 1) price += 1.00;
+        if (pepperoni == 1) price += 1.50;
+        if (mushroom == 1) price += 0.75;
+        
+        return price;
+    }
+
+    // High performance calorie evaluation engine
+    EMSCRIPTEN_KEEPALIVE
+    int calculate_calories(int size_type, int cheese, int pepperoni, int mushroom) {
+        int calories = 0;
+        
+        if (size_type == 1) calories += 500;
+        else if (size_type == 2) calories += 800;
+        else if (size_type == 3) calories += 1100;
+        
+        if (cheese == 1) calories += 150;
+        if (pepperoni == 1) calories += 200;
+        if (mushroom == 1) calories += 30;
+        
+        return calories;
+    }
+}
