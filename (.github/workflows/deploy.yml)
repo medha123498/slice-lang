@@ -1,26 +1,30 @@
-name: Deploy Slice-Lang to GitHub Pages
+name: Deploy Slice Lang
 
 on:
-  push:
-    branches:
-      - main
+ push:
+  branches:
+   - main
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
 
-    - name: Setup Emscripten Runtime 环境
-      uses: mymindstorm/setup-emsdk@v14
+ build:
+  runs-on: ubuntu-latest
 
-    - name: Compile C++ to WebAssembly Binaries
-      run: |
-        emcc main.cpp -o slice.js -s EXPORTED_FUNCTIONS='["_calculate_pizza", "_calculate_calories"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall"]'
+  steps:
 
-    - name: Push to Production (gh-pages)
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: .
-        branch: gh-pages
+  - uses: actions/checkout@v4
+
+  - uses: mymindstorm/setup-emsdk@v14
+
+  - name: Compile
+    run: |
+      emcc main.cpp \
+      -o slice.js \
+      -s EXPORTED_FUNCTIONS='["_calculate_pizza","_calculate_calories"]' \
+      -s EXPORTED_RUNTIME_METHODS='["ccall"]'
+
+  - name: Deploy
+    uses: JamesIves/github-pages-deploy-action@v4
+    with:
+      folder: .
+      branch: gh-pages
