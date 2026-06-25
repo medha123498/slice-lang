@@ -1,0 +1,38 @@
+body{
+    font-family: Arial;
+    background:#f7f7f7;
+}
+
+.container{
+    width:600px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+}
+
+h1{
+    color:#e63946;
+}
+
+.section{
+    margin:20px;
+}
+
+select,button{
+    padding:10px;
+}
+
+.invoice{
+    margin-top:30px;
+    background:#ffe8d6;
+    padding:20px;
+}
+
+.btn{
+    background:#e63946;
+    color:white;
+    border:none;
+    border-radius:5px;
+}
