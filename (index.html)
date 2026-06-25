@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slice Lang - Pizza Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍕 Slice-Lang</h1>
+        <p class="subtitle">Compile Your Perfect Pizza with C++ WebAssembly</p>
+        
+        <div class="configurator">
+            <!-- Pizza Sizing -->
+            <div class="section">
+                <h3>1. Select Size</h3>
+                <select id="size" onchange="updatePizza()">
+                    <option value="1">Small ($5.99)</option>
+                    <option value="2" selected>Medium ($8.99)</option>
+                    <option value="3">Large ($11.99)</option>
+                </select>
+            </div>
+
+            <!-- Pizza Crust Base -->
+            <div class="section">
+                <h3>2. Crust Type</h3>
+                <select id="crust" onchange="updatePizza()">
+                    <option value="1">Classic</option>
+                    <option value="2">Stuffed Crust (+$1.50)</option>
+                    <option value="3">Gluten-Free (+$2.00)</option>
+                </select>
+            </div>
+
+            <!-- Condiments -->
+            <div class="section">
+                <h3>3. Add Toppings</h3>
+                <label><input type="checkbox" id="cheese" onchange="updatePizza()" checked> Extra Cheese (+$1.00)</label><br>
+                <label><input type="checkbox" id="pepperoni" onchange="updatePizza()"> Pepperoni (+$1.50)</label><br>
+                <label><input type="checkbox" id="mushroom" onchange="updatePizza()"> Mushrooms (+$0.75)</label>
+            </div>
+        </div>
+
+        <!-- WebAssembly Runtime Invoicing -->
+        <div class="invoice">
+            <h2>Compilation Output:</h2>
+            <p>Total Price: <span id="price">$0.00</span></p>
+            <p>Calculated Energy: <span id="calories">0</span> kcal</p>
+            <button class="btn" onclick="alert('Pizza Compiled & Routed Successfully!')">Order Now</button>
+        </div>
+    </div>
+
+    <!-- Generated WebAssembly glue script -->
+    <script src="slice.js"></script>
+    
+    <script>
+        // Triggered automatically when the WebAssembly runtime is hot and initialized
+        Module.onRuntimeInitialized = function() {
+            updatePizza();
+        };
+
+        function updatePizza() {
+            const size = parseInt(document.getElementById('size').value);
+            const crust = parseInt(document.getElementById('crust').value);
+            const cheese = document.getElementById('cheese').checked ? 1 : 0;
+            const pepperoni = document.getElementById('pepperoni').checked ? 1 : 0;
+            const mushroom = document.getElementById('mushroom').checked ? 1 : 0;
+
+            // Direct mapping invocation into C++ runtime using 'ccall'
+            const totalPrice = Module.ccall('calculate_pizza', 'number', 
+                ['number', 'number', 'number', 'number', 'number'], 
+                [size, crust, cheese, pepperoni, mushroom]
+            );
+
+            const totalCalories = Module.ccall('calculate_calories', 'number', 
+                ['number', 'number', 'number', 'number'], 
+                [size, cheese, pepperoni, mushroom]
+            );
+
+            // Re-render UI elements
+            document.getElementById('price').innerText = '$' + totalPrice.toFixed(2);
+            document.getElementById('calories').innerText = totalCalories;
+        }
+    </script>
+</body>
+</html>
